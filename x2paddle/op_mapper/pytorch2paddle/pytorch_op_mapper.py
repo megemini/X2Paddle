@@ -108,6 +108,9 @@ class PyTorchOpMapper():
                 input_ct += 1
         # 转换中间节点
         for node in script_graph.nodes():
+            if len(graph.layers) == 463:
+                print('o')
+
             kind = node.kind()
             func_name = kind.replace('::', '_')
             # Processing suffix is "_" situation, eg: aten_relu_ to aten_relu

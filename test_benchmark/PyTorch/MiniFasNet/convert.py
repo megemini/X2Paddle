@@ -11,7 +11,7 @@ from MiniFASNet import MiniFASNetV1, MiniFASNetV2, MiniFASNetV1SE, MiniFASNetV2S
 import torch
 import numpy as np
 from torchvision.models import AlexNet
-from torchvision.models.utils import load_state_dict_from_url
+# from torchvision.models.utils import load_state_dict_from_url
 from x2paddle.convert import pytorch2paddle
 # 构建输入,pytorch-to-paddle
 input_data = np.random.rand(1, 3, 80, 80).astype("float32")
@@ -25,7 +25,8 @@ torch_module = MiniFASNetV1SE(embedding_size=128,
                               num_classes=3,
                               img_channel=3)
 torch_state_dict = torch.load(
-    '../dataset/MiniFasNet/4_0_0_80x80_MiniFASNetV1SE.pth',
+    # '../dataset/MiniFasNet/4_0_0_80x80_MiniFASNetV1SE.pth',
+    '/home/shun/Documents/Projects/paddle/megemini/X2Paddle/test_benchmark/PyTorch/dataset/MiniFasNet/4_0_0_80x80_MiniFASNetV1SE.pth',
     map_location=torch.device('cpu'))
 # torch_module = AlexNet()
 # torch_state_dict = load_state_dict_from_url('https://download.pytorch.org/models/alexnet-owt-4df8aa71.pth')

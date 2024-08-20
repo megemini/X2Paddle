@@ -277,7 +277,8 @@ class PaddleGraph(object):
                 hierarchical_tree.save_source_files(save_dir)
                 self.dump_parameter(save_dir)
             else:
-                self.gen_code(save_dir)
+                # TODO
+                # self.gen_code(save_dir)
                 self.dump_parameter(save_dir)
         else:
             if self.source_type == "pytorch" and enable_code_optim:
@@ -450,6 +451,11 @@ class PaddleGraph(object):
             gen_head()
 
         for layer_id, layer in self.layers.items():
+
+            for l in self.forward_func:
+                if l.strip().startswith('x989'):
+                    print('ok')
+
             if layer.kernel.startswith("paddle"):
                 remove_default_attrs(layer.kernel, layer.attrs)
             if ("paddle.nn" in layer.kernel and "functional" not in layer.kernel
@@ -472,6 +478,10 @@ class PaddleGraph(object):
 
                 if layer.kernel == "paddle.to_tensor" and not layer.attrs[
                         "data"].startswith("params["):
+                    
+                    if line.strip().startswith('x990'):
+                        assert False, 'a'
+
                     self.forward_func.extend(gen_codes([line], indent=indent))
                     continue
                 else:
@@ -501,6 +511,10 @@ class PaddleGraph(object):
                             line += "{}, ".format(v)
                     line = line.strip(", ")
                     line += ")"
+
+                if line.strip().startswith('x990'):
+                    assert False, 'b'
+
                 self.forward_func.extend(gen_codes([line], indent=indent))
             elif "prim" in layer.kernel:
                 func_name = layer.kernel.replace(".", "_")
@@ -539,6 +553,13 @@ class PaddleGraph(object):
                     line += "{}={}, ".format(k, v)
                 line = line.strip(", ")
                 line += ")"
+
+                if line.strip().startswith('x990'):
+                    assert False, 'c'
+
+                if layer.outputs[0] == 'x990':
+                    assert False, 'd'
+
                 if layer.kernel == "self.create_parameter":
                     self.init_func.extend(gen_codes(["self." + line], indent=2))
                     self.forward_func.extend(
