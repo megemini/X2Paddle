@@ -1,5 +1,5 @@
 from __future__ import print_function
-import paddle.fluid as fluid
+# import paddle.fluid as fluid
 import paddle
 import sys
 import os
@@ -16,8 +16,9 @@ try:
     # trace
     paddle.enable_static()
     exe = paddle.static.Executor(paddle.CPUPlace())
-    [prog, inputs, outputs] = fluid.io.load_inference_model(
-        dirname="pd_model_trace/inference_model/",
+    # [prog, inputs, outputs] = fluid.io.load_inference_model(
+    [prog, inputs, outputs] = paddle.static.load_inference_model(
+        dirname="pd_model_trace/inference_model",
         executor=exe,
         model_filename="model.pdmodel",
         params_filename="model.pdiparams")
@@ -31,8 +32,9 @@ try:
     # script
     paddle.enable_static()
     exe = paddle.static.Executor(paddle.CPUPlace())
-    [prog, inputs, outputs] = fluid.io.load_inference_model(
-        dirname="pd_model_script/inference_model/",
+    # [prog, inputs, outputs] = fluid.io.load_inference_model(
+    [prog, inputs, outputs] = paddle.static.load_inference_model(
+        dirname="pd_model_script/inference_model",
         executor=exe,
         model_filename="model.pdmodel",
         params_filename="model.pdiparams")
