@@ -342,11 +342,14 @@ class TFDecoder(object):
             self.sess.graph.as_default()
             tf.import_graph_def(graph_def, name='', input_map=input_map)
 
+        # TODO(megemini): `initializer` is `None``, https://blog.csdn.net/qq_37285386/article/details/89054090
         try:
             initializer = tf.compat.v1.global_variables_initializer()
         except:
             initializer = tf.global_variables_initializer()
-        self.sess.run(initializer)
+
+        if initializer is not None:
+            self.sess.run(initializer)
 
         self.tf_graph = TFGraph(
             self.sess.graph._as_graph_def(add_shapes=True)[0], data_format)

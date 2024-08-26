@@ -154,13 +154,14 @@ def tf2paddle(model_path,
     try:
         import os
         os.environ["TF_CPP_MIN_LOG_LEVEL"] = '3'
-        import tensorflow as tf
-        version = tf.__version__
-        if version >= '2.0.0' or version < '1.0.0':
-            logging.info(
-                "[ERROR] 1.0.0<=TensorFlow<2.0.0 is required, and v1.14.0 is recommended"
-            )
-            return
+        # import tensorflow as tf
+        # version = tf.__version__
+        # TODO(megemini): tf version
+        # if version >= '2.0.0' or version < '1.0.0':
+        #     logging.info(
+        #         "[ERROR] 1.0.0<=TensorFlow<2.0.0 is required, and v1.14.0 is recommended"
+        #     )
+        #     return
     except:
         logging.info(
             "[ERROR] TensorFlow is not installed, use \"pip install TensorFlow\"."
