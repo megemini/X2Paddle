@@ -13,7 +13,7 @@ try:
     # test dygraph
     # [prog, inputs, outputs] = fluid.io.load_inference_model(
     [prog, inputs, outputs] = paddle.static.load_inference_model(
-        dirname="pd_model_dygraph/inference_model",
+        path_prefix="pd_model_dygraph/inference_model",
         executor=exe,
         model_filename="model.pdmodel",
         params_filename="model.pdiparams")
