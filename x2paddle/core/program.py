@@ -277,8 +277,8 @@ class PaddleGraph(object):
                 hierarchical_tree.save_source_files(save_dir)
                 self.dump_parameter(save_dir)
             else:
-                # TODO
-                # self.gen_code(save_dir)
+                # TODO(megemini): bug with constant is `None``
+                self.gen_code(save_dir)
                 self.dump_parameter(save_dir)
         else:
             if self.source_type == "pytorch" and enable_code_optim:
@@ -478,7 +478,7 @@ class PaddleGraph(object):
 
                 if layer.kernel == "paddle.to_tensor" and not layer.attrs[
                         "data"].startswith("params["):
-                    
+
                     if line.strip().startswith('x990'):
                         assert False, 'a'
 
