@@ -6620,3 +6620,90 @@ def aten_topk(mapper, graph, node):
                     **layer_attrs)
 
     return current_inputs, current_outputs
+
+
+def aten_scaled_dot_product_attention(mapper, graph, node):
+    """
+    TorchScript:
+        %attn_output.17 : Tensor = aten::scaled_dot_product_attention(
+            %query_layer.9,
+            %key_layer.9,
+            %value_layer.9,
+            %attention_mask,
+            %13,
+            %29,
+            %19)
+        Parameter meaning:
+        %attn_output.17 (Tensor): output Tensor
+        %query_layer.9 (Tensor): input query
+        %key_layer.9 (Tensor): input key
+        %value_layer.9 (Tensor): input value
+        %attention_mask (Tensor): input mask
+        %13 (float): dropout ratio
+        %29 (bool): is_causal
+        %19 (float): scale, default is None. Note: paddle not support this param.
+    """
+    scope_name = mapper.normalize_scope_name(node)
+    output_name = mapper._get_outputs_name(node)
+    layer_outputs = output_name
+    layer_inputs = {}
+    layer_attrs = {}
+    inputs_name, inputs_node = mapper._get_inputs_name(node)
+    # 获取当前节点输出的list
+    current_outputs = [output_name]
+
+    # 处理输入0，即%query_layer.9
+    mapper._check_input(graph, inputs_node[0], inputs_name[0], current_outputs,
+                        scope_name)
+    layer_inputs["query"] = inputs_name[0]
+
+    # 处理输入1，即%key_layer.9
+    mapper._check_input(graph, inputs_node[1], inputs_name[1], current_outputs,
+                        scope_name)
+    layer_inputs["key"] = inputs_name[1]
+
+    # 处理输入2，即%value_layer.9
+    mapper._check_input(graph, inputs_node[2], inputs_name[2], current_outputs,
+                        scope_name)
+    layer_inputs["value"] = inputs_name[2]
+
+    # 处理输入3，即%attention_mask
+    mapper._check_input(graph, inputs_node[3], inputs_name[3], current_outputs,
+                        scope_name)
+    layer_inputs["attn_mask"] = inputs_name[3]
+
+    # # process dropout ratio
+    # if inputs_name[4] in mapper.attrs:
+    #     print('*'*30, "dropout ratio")
+    #     layer_attrs["dropout_p"] = mapper.attrs[inputs_name[4]]
+    # else:
+    #     mapper._check_input(graph, inputs_node[4], inputs_name[4],
+    #                         current_outputs, scope_name)
+    #     layer_inputs["dropout_p"] = inputs_name[4]
+
+    # # process is_causal
+    # if inputs_name[5] in mapper.attrs:
+    #     print('*'*30, "is_causal")
+    #     layer_attrs["is_causal"] = mapper.attrs[inputs_name[5]]
+    # else:
+    #     mapper._check_input(graph, inputs_node[5], inputs_name[5],
+    #                         current_outputs, scope_name)
+    #     layer_inputs["is_causal"] = inputs_name[5]
+
+    layer_attrs["training"] = False
+
+    # print('='*30, mapper.attrs)
+    # print('#'*30, inputs_name)
+
+    # assert False
+
+    # 获取当前节点输入的list
+    current_inputs = list(layer_inputs.values())
+
+    graph.add_layer("paddle.nn.functional.scaled_dot_product_attention",
+                    inputs=layer_inputs,
+                    outputs=layer_outputs,
+                    scope_name=scope_name,
+                    **layer_attrs)
+
+    return current_inputs, current_outputs
