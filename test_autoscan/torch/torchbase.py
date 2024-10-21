@@ -217,7 +217,10 @@ class TorchConverter(object):
             # TODO(megemini): debug
             # config.disable_glog_info()
             # TODO(megemini):
-            config.DisableMKLDNN()
+            try:
+                config.DisableMKLDNN()
+            except:
+                pass
 
             pass_builder = config.pass_builder()
             predictor = create_predictor(config)
