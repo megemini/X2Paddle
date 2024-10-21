@@ -277,6 +277,8 @@ class ONNXConverter(object):
 
             # TODO(megemini): debug
             # config.disable_glog_info()
+            # TODO(megemini):
+            config.DisableMKLDNN()
 
             logger.info(">>> config.pass_builder...")
 
