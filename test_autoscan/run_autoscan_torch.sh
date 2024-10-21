@@ -28,7 +28,10 @@ for var in ${file_arr[@]}
 do
   log_name=${logs_path}/${var}.log
   echo " Now start test: ${var}"
-  python ${var} > ${log_name} 2>&1
+
+  # TODO(megemini): debug
+  # python ${var} > ${log_name} 2>&1
+  GLOG_v=3 python ${var}
 
 done
 
