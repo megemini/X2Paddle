@@ -14,10 +14,16 @@
 # limitations under the License.
 
 import copy
+import logging
+
 import numpy as np
 from x2paddle.core.util import name_generator, string
 from x2paddle.utils import paddle_dtypes
 from x2paddle.core.program import PaddleGraph
+
+logging.basicConfig(level=logging.INFO, format="%(message)s")
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 dtype_dict = {
     0: string("uint8"),
@@ -6643,6 +6649,10 @@ def aten_scaled_dot_product_attention(mapper, graph, node):
         %29 (bool): is_causal
         %19 (float): scale, default is None. Note: paddle not support this param.
     """
+    logger.warning(
+        "This API `paddle.nn.functional.scaled_dot_product_attention` only supports inputs with dtype float16 and bfloat16."
+        "And the function is subject to change.")
+
     scope_name = mapper.normalize_scope_name(node)
     output_name = mapper._get_outputs_name(node)
     layer_outputs = output_name
@@ -6672,30 +6682,23 @@ def aten_scaled_dot_product_attention(mapper, graph, node):
                         scope_name)
     layer_inputs["attn_mask"] = inputs_name[3]
 
-    # # process dropout ratio
-    # if inputs_name[4] in mapper.attrs:
-    #     print('*'*30, "dropout ratio")
-    #     layer_attrs["dropout_p"] = mapper.attrs[inputs_name[4]]
-    # else:
-    #     mapper._check_input(graph, inputs_node[4], inputs_name[4],
-    #                         current_outputs, scope_name)
-    #     layer_inputs["dropout_p"] = inputs_name[4]
+    # process dropout ratio
+    if inputs_name[4] in mapper.attrs:
+        layer_attrs["dropout_p"] = mapper.attrs[inputs_name[4]]
+    else:
+        mapper._check_input(graph, inputs_node[4], inputs_name[4],
+                            current_outputs, scope_name)
+        layer_inputs["dropout_p"] = inputs_name[4]
 
-    # # process is_causal
-    # if inputs_name[5] in mapper.attrs:
-    #     print('*'*30, "is_causal")
-    #     layer_attrs["is_causal"] = mapper.attrs[inputs_name[5]]
-    # else:
-    #     mapper._check_input(graph, inputs_node[5], inputs_name[5],
-    #                         current_outputs, scope_name)
-    #     layer_inputs["is_causal"] = inputs_name[5]
+    # process is_causal
+    if inputs_name[5] in mapper.attrs:
+        layer_attrs["is_causal"] = mapper.attrs[inputs_name[5]]
+    else:
+        mapper._check_input(graph, inputs_node[5], inputs_name[5],
+                            current_outputs, scope_name)
+        layer_inputs["is_causal"] = inputs_name[5]
 
     layer_attrs["training"] = False
-
-    # print('='*30, mapper.attrs)
-    # print('#'*30, inputs_name)
-
-    # assert False
 
     # 获取当前节点输入的list
     current_inputs = list(layer_inputs.values())
