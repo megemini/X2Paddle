@@ -6650,8 +6650,11 @@ def aten_scaled_dot_product_attention(mapper, graph, node):
         %19 (float): scale, default is None. Note: paddle not support this param.
     """
     logger.warning(
-        "This API `paddle.nn.functional.scaled_dot_product_attention` only supports inputs with dtype float16 and bfloat16."
-        "And the function is subject to change.")
+        "This API `paddle.nn.functional.scaled_dot_product_attention` only supports inputs with dtype float16 and bfloat16.\n"
+        "And the function is subject to change.\n"
+        "If `transformers` is using for loading model from pretrained, try to use `attn_implementation='eager'`.\n"
+        "e.g. `torch_model = BertForMaskedLM.from_pretrained('/checkpoints', attn_implementation='eager')`"
+    )
 
     scope_name = mapper.normalize_scope_name(node)
     output_name = mapper._get_outputs_name(node)
