@@ -3435,8 +3435,22 @@ def aten_linear(mapper, graph, node):
                     scope_name=scope_name,
                     **layer_attrs)
     if len(inputs_name) == 3:
-        mapper._check_input(graph, inputs_node[2], inputs_name[2],
-                            current_outputs, scope_name)
+        # make `bias` dtype like `weight`, and shape is `1` for broadcast
+        if inputs_name[1] in mapper.pytorch_params:
+            param = mapper.pytorch_params[inputs_name[1]]
+            dtype = string(str(param.dtype))
+            shape = (1, )
+            mapper._check_input(graph,
+                                inputs_node[2],
+                                inputs_name[2],
+                                current_outputs,
+                                scope_name,
+                                dtype=dtype,
+                                shape=shape)
+        else:
+            mapper._check_input(graph, inputs_node[2], inputs_name[2],
+                                current_outputs, scope_name)
+
         graph.add_layer("paddle.add",
                         inputs={
                             "x": output_name,
