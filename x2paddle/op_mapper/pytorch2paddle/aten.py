@@ -3436,7 +3436,8 @@ def aten_linear(mapper, graph, node):
                     **layer_attrs)
     if len(inputs_name) == 3:
         # make `bias` dtype like `weight`, and shape is `1` for broadcast
-        if inputs_name[1] in mapper.pytorch_params:
+        if (inputs_name[2] not in mapper.pytorch_params
+                and inputs_name[1] in mapper.pytorch_params):
             param = mapper.pytorch_params[inputs_name[1]]
             dtype = string(str(param.dtype))
             shape = (1, )
