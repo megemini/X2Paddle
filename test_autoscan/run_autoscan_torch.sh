@@ -29,7 +29,7 @@ do
   log_name=${logs_path}/${var}.log
   echo " Now start test: ${var}"
 
-  # TODO(megemini): debug
+  # TODO(megemini):
   # python ${var} > ${log_name} 2>&1
   GLOG_v=3 python ${var}
 
