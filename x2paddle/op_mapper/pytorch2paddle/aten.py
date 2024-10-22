@@ -6620,3 +6620,7 @@ def aten_topk(mapper, graph, node):
                     **layer_attrs)
 
     return current_inputs, current_outputs
+
+
+aten_linalg_vector_norm = aten_norm
+aten_unsafe_chunk = aten_chunk

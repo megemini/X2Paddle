@@ -121,6 +121,6 @@ def convert_vocoder():
 
 
 if __name__ == '__main__':
-    # convert_encoder()
+    convert_encoder()
     # convert_synthesizer()
     convert_vocoder()

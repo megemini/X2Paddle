@@ -1,4 +1,4 @@
-python -m pip install scikit-learn matplotlib librosa unidecode inflect pypinyin
+# python -m pip install scikit-learn matplotlib librosa unidecode inflect pypinyin
 # run convert
 python convert_trace.py
 # run infer
