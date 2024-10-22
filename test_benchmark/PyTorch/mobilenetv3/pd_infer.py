@@ -3,6 +3,8 @@ import numpy as np
 import sys
 import pickle
 
+import traceback
+
 f = open('result.txt', 'w')
 f.write("======Mobilenetv3: \n")
 try:
@@ -30,7 +32,7 @@ try:
         f.write("Dygraph Successed\n")
     else:
         f.write("!!!!!Dygraph Failed\n")
-except:
+except Exception as e:
     f.write("!!!!!Failed\n")
 
-    raise
+    f.write(traceback.format_exc())
