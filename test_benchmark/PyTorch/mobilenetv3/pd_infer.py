@@ -32,3 +32,5 @@ try:
         f.write("!!!!!Dygraph Failed\n")
 except:
     f.write("!!!!!Failed\n")
+
+    raise
