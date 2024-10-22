@@ -379,14 +379,14 @@ def pytorch2paddle(module,
             v2 = v2.split('+')[0]
         version_sum = int(v0) * 100 + int(v1) * 10 + int(v2)
         if version_sum < 150:
-            logging.info("[ERROR] PyTorch>=1.5.0 is required")
+            logger.info("[ERROR] PyTorch>=1.5.0 is required")
             return
     except:
-        logging.info(
+        logger.info(
             "[ERROR] PyTorch is not installed, use \"pip install torch torchvision\"."
         )
         return
-    logging.info("Now translating model from PyTorch to Paddle.")
+    logger.info("Now translating model from PyTorch to Paddle.")
 
     from x2paddle.decoder.pytorch_decoder import ScriptDecoder, TraceDecoder
     from x2paddle.op_mapper.pytorch2paddle.pytorch_op_mapper import PyTorchOpMapper
@@ -397,39 +397,39 @@ def pytorch2paddle(module,
         model = ScriptDecoder(module, input_examples)
     mapper = PyTorchOpMapper(model)
     mapper.paddle_graph.build()
-    logging.info("Model optimizing ...")
+    logger.info("Model optimizing ...")
     from x2paddle.optimizer.optimizer import GraphOptimizer
     graph_opt = GraphOptimizer(source_frame="pytorch", jit_type=jit_type)
     graph_opt.optimize(mapper.paddle_graph)
-    logging.info("Model optimized!")
+    logger.info("Model optimized!")
     mapper.paddle_graph.gen_model(save_dir,
                                   jit_type=jit_type,
                                   enable_code_optim=enable_code_optim)
-    logging.info("Successfully exported Paddle static graph model!")
+    logger.info("Successfully exported Paddle static graph model!")
     if not disable_feedback:
         ConverterCheck(task="PyTorch",
                        time_info=time_info,
                        convert_state="Success").start()
     if convert_to_lite:
-        logging.info("Now translating model from Paddle to Paddle Lite ...")
+        logger.info("Now translating model from Paddle to Paddle Lite ...")
         if not disable_feedback:
             ConverterCheck(task="PyTorch",
                            time_info=time_info,
                            lite_state="Start").start()
         convert2lite(save_dir, lite_valid_places, lite_model_type)
-        logging.info("Successfully exported Paddle Lite support model!")
+        logger.info("Successfully exported Paddle Lite support model!")
         if not disable_feedback:
             ConverterCheck(task="PyTorch",
                            time_info=time_info,
                            lite_state="Success").start()
     # for convert survey
-    logging.info("================================================")
-    logging.info("")
-    logging.info(
+    logger.info("================================================")
+    logger.info("")
+    logger.info(
         "Model Converted! Fill this survey to help X2Paddle better, https://iwenjuan.baidu.com/?code=npyd51 "
     )
-    logging.info("")
-    logging.info("================================================")
+    logger.info("")
+    logger.info("================================================")
 
 
 def main():
