@@ -1,4 +1,3 @@
-ACG_UnitTest
 BertForMaskedLM_dccuchile
 BertModel_SpanBert
 CamembertForQuestionAnswering
@@ -9,13 +8,10 @@ EasyOCR_recognizer
 FCN_ResNet50
 GRU
 MiniFasNet
-Mobilestereonet
 MockingBird
 Roberta
-Saicinpainting_LaMa
 SwinTransformer
 XLMRobertaForTokenClassification
-opadd
 dataset
 tools
 output
