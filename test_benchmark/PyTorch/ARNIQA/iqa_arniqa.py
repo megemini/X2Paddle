@@ -12,7 +12,7 @@ def forward(x,
 
     f = F.normalize(encoder(x), axis=1)
     f_ds = F.normalize(encoder(x_ds), axis=1)
-    f_combined = paddle.hstack((f, f_ds)).view([-1, feat_dim * 2])
+    f_combined = paddle.hstack((f, f_ds)).reshape([-1, feat_dim * 2])
 
     score = regressor(f_combined)
     score = _scale_score(score)

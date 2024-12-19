@@ -50,10 +50,11 @@ print(regressor.biases)
 print(regressor.weights)
 
 # TODO(megemini):
-# input_data = np.random.rand(1, 3, 256, 256).astype('float32')
+input_data = np.random.rand(1, 3, 256, 256).astype('float32')
 
 input_model = torch.tensor(input_data)
 input_model_paddle = paddle.to_tensor(input_data)
+input_model_resnet50 = paddle.to_tensor(input_data)
 
 save_dir = "pd_model"
 jit_type = "trace"
@@ -65,9 +66,9 @@ pytorch2paddle(encoder,
                jit_type, [input_model],
                disable_feedback=True)
 
-input_data = np.random.rand(1, 2048).astype('float32')
-input_regressor = torch.tensor(input_data)
-input_regressor_paddle = paddle.to_tensor(input_data)
+input_data_regressor = np.random.rand(1, 2048).astype('float32')
+input_regressor = torch.tensor(input_data_regressor)
+input_regressor_paddle = paddle.to_tensor(input_data_regressor)
 
 save_dir = "pd_model_regressor"
 
@@ -113,3 +114,46 @@ paddle_score = paddle_forward(input_model_paddle, encoder_paddle,
 
 print('-' * 20)
 print(paddle_score)
+
+from iqa_arniqa_model import ARNIQA
+
+arniqa = ARNIQA(default_mean_paddle, default_std_paddle, feat_dim)
+arniqa_score = arniqa(input_model_paddle)
+
+print('-' * 20)
+print(arniqa_score)
+from os import path as osp
+
+input_spec = paddle.static.InputSpec(shape=[-1, 3, -1, -1],
+                                     name='x',
+                                     dtype='float32')
+static_model = paddle.jit.to_static(arniqa,
+                                    input_spec=[input_spec],
+                                    full_graph=True)
+paddle.jit.save(static_model,
+                osp.join('pd_model_arniqa', "inference_model/model"))
+
+paddle.enable_static()
+exe = paddle.static.Executor()
+[prog, inputs, outputs] = paddle.static.load_inference_model(
+    path_prefix="pd_model_arniqa/inference_model/model", executor=exe)
+result = exe.run(prog, feed={inputs[0]: input_data}, fetch_list=outputs)
+print('-' * 20)
+print(result)
+
+import pyiqa
+
+iqa_metric = pyiqa.create_metric('arniqa')
+score_nr = iqa_metric(input_model)
+
+print('-' * 20)
+print('>>> pyiqa')
+print(score_nr)
+
+from brisque import BRISQUE
+
+obj = BRISQUE(url=False)
+score_brisque = obj.score(np.squeeze(input_data).transpose([1, 2, 0]))
+print('-' * 20)
+print('>>> brisque')
+print(score_brisque)
